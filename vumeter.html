@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+
+	vumeter = {
+	  numberOfLeds: 8,
+	  ledCollor: 'green',
+	  greenMargin: 0.6,
+	  yellowMargin: 0.8,
+	  redMargin: 1.0,
+	  collors:
+		{
+		  1: 'green',
+		  2: 'yellow',
+		  3: 'red'
+		}
+	  }
+
+	createLed = function(ledNo, collor){
+	  led = '<div id="led'+ ledNo +
+	  '" style="height: 20px; width: 150px; border-radius: 10px;' +
+	  'background: ' + collor + '; margin-bottom: 3px;"></div>';
+	  return led;
+	};
+
+	createVumeter = function(){
+	  vumeterDiv = $('#vumeter');
+	  vumeterDiv.empty();
+	  console.log(vumeterDiv);
+	  for(ledNo = vumeter.numberOfLeds; ledNo >0; ledNo--){
+		vumeterDiv.append(createLed(ledNo, vumeter.ledCollor));
+	  }
+	};
+
+	audioValue = function(maxNum){
+	  return Math.floor((Math.random() * maxNum) + 1);
+	}
+
+	getLedCollor = function(ledNo){
+	  ledCollor = 'transparent';
+	  vuScale = ledNo/vumeter.numberOfLeds;
+	  if((vuScale)<=vumeter.greenMargin)
+		ledCollor = 'green';
+	  else if(vuScale>vumeter.greenMargin && (vuScale)<=vumeter.yellowMargin)
+		ledCollor = 'yellow';
+	  else
+		ledCollor = 'red';
+	  return ledCollor;
+	}
+
+	writeToVumeter = function(vuValue){
+	  for(ledNo = vumeter.numberOfLeds; ledNo >0; ledNo--){
+		$('#led' + ledNo).css('background', ledNo<vuValue ? getLedCollor(ledNo) : 'transparent');
+	  }
+	}
+	
+	$("button").click(function(){
+      vumeter.numberOfLeds = $("#noOfLeds").val() > 0 ? $("#noOfLeds").val() : 10;
+	  createVumeter();
+    });
+
+	updateVumeter = function(){
+	  writeToVumeter(audioValue(vumeter.numberOfLeds));
+	}
+
+	createVumeter();
+
+	setInterval(updateVumeter, 150);
+});
+</script>
+</head>
+<body>
+
+<p>VU meter</p>
+<p>Number of leds:<input type="number" id="noOfLeds"></input></p>
+<p><button>Set</button></p>
+<div id="vumeter">
+
+</body>
+</html>
